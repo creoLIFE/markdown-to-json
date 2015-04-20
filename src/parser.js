@@ -6,6 +6,12 @@ var fs = require('fs');
 var marked = require('marked')
 
 var parser = {
+    /**
+     * Method will parse givem markdown file data and give back object
+     * @param [object] data - markdown file
+     * @param [integer] parseDepth - define depth of parsed data
+     * @return [object]
+     */
     getJson: function (data, parseDepth) {
         var parseDepth = parseDepth ? parseDepth : 3;
         var tokens = marked.lexer(
@@ -33,24 +39,27 @@ var parser = {
                     curr.heading = curr.heading || root;
                     curr.depth = depth;
 
-                    (curr.heading.subsections || root.sections).push(curr.heading = parser.hideParent({
-                        name: name,
-                        subsections: [],
-                        parent: curr.heading
-                    }))
-
-                } else {
+                    (curr.heading.subsections || root.sections).push(
+                        curr.heading = parser.hideParent({
+                            name: name,
+                            subsections: [],
+                            parent: curr.heading
+                        })
+                    )
+                }
+                else {
                     while (curr.depth !== depth) {
-                        curr.depth -= 1
-                        curr.heading = curr.heading.parent || root
+                        curr.depth -= 1;
+                        curr.heading = curr.heading.parent || root;
                     }
 
-                    (curr.heading.parent.subsections || root.sections
-                        ).push(curr.heading = parser.hideParent({
+                    (curr.heading.parent.subsections || root.sections).push(
+                        curr.heading = parser.hideParent({
                             name: name,
                             subsections: [],
                             parent: curr.heading.parent
-                        }))
+                        })
+                    )
                 }
 
                 var d = parser.findDetails(i, tokens);
@@ -62,6 +71,12 @@ var parser = {
         return root;
     },
 
+    /**
+     * Method will parse marked array and get details for current token
+     * @param [integer] currEl - position of start element in marked array
+     * @param [array] array - array of marked elements
+     * @return [object]
+     */
     findDetails: function (currEl, array) {
         var details = {
             text: "",
@@ -69,12 +84,12 @@ var parser = {
         }
         var grabContent = false;
 
+        //Look for data in array
         for (var i = currEl + 1; i < array.length; i++) {
             var el = array[i];
             if (el.type === 'heading') {
                 break;
             }
-            ;
             switch (el.type) {
                 case 'paragraph':
                     details.text = el.text;
@@ -95,12 +110,17 @@ var parser = {
         return details;
     },
 
-    hideParent: function (obj) {
-        Object.defineProperty(obj, 'parent', {
-            value: obj.parent, enumerable: false
+    /**
+     * Method will hide parrent section in output token
+     * @param [object] object
+     * @return [object]
+     */
+    hideParent: function (object) {
+        Object.defineProperty(object, 'parent', {
+            value: object.parent, enumerable: false
         });
 
-        return obj
+        return object
     }
 }
 
@@ -116,9 +136,8 @@ module.exports.parse = function (params, callback) {
 
     fs.exists(params.fileName, function () {
         fs.readFile(params.fileName, 'utf8', function (err, data) {
-
             if (typeof callback === 'function') {
-                callback(parser.getJson(data,params.depth));
+                callback(parser.getJson(data, params.depth));
             }
             else {
                 throw new Error('No callback function defined');
