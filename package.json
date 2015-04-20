@@ -1,0 +1,23 @@
+{
+    "name": "creolife-markdown-to-json",
+    "version": "1.0.4",
+    "description": "Hash Markdown file parser to JSON",
+    "author": "Miroslaw Ratman <mirek.ratman@gmail.com>",
+    "license": "MIT",
+    "scripts": {
+        "start": "node app.js"
+    },
+    "keywords": [
+        "markdown",
+        "json",
+        "parser"
+    ],
+    "main": "./src/parser.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/creoLIFE/markdown-to-json.git"
+    },
+    "dependencies": {
+        "marked": "~0.2.10"
+    }
+}
