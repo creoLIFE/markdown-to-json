@@ -1,11 +1,52 @@
 /**
  * Created by miroslawratman on 17/04/15.
  */
+'use strict'
 
 var fs = require('fs');
 var marked = require('marked')
 
 var parser = {
+
+    /**
+     * Method will parse markdown file and save it as a object
+     * @param [object] params
+     *        [string] fileName - path to markdown file
+     *        [integer] depth - depth of parsing
+     * @param [function] callback
+     * @return [void]
+     */
+    parseFile: function (params, callback) {
+
+        fs.exists(params.fileName, function () {
+            fs.readFile(params.fileName, 'utf8', function (err, data) {
+                if (typeof callback === 'function') {
+                    parser.parse({content: data, depth: params.depth}, callback);
+                }
+                else {
+                    throw new Error('No callback function defined');
+                }
+            })
+        });
+    },
+
+    /**
+     * Method will parse markdown content and save it as a object
+     * @param [object] params
+     *        [string] content - content to parse
+     *        [integer] depth - depth of parsing
+     * @param [function] callback
+     * @return [void]
+     */
+    parse: function (params, callback) {
+        if (typeof callback === 'function') {
+            callback(parser.getJson(params.content, params.depth));
+        }
+        else {
+            throw new Error('No callback function defined');
+        }
+    },
+
     /**
      * Method will parse givem markdown file data and give back object
      * @param [object] data - markdown file
@@ -125,24 +166,8 @@ var parser = {
 }
 
 
-/**
- * Method will parse markdown file and save it as a object
- * @param [object] params
- * * [string] fileName
- * @param [function] callback
- * @return [void]
- */
-module.exports.parse = function (params, callback) {
+module.exports.parseFile = parser.parseFile;
+module.exports.parse = parser.parse;
 
-    fs.exists(params.fileName, function () {
-        fs.readFile(params.fileName, 'utf8', function (err, data) {
-            if (typeof callback === 'function') {
-                callback(parser.getJson(data, params.depth));
-            }
-            else {
-                throw new Error('No callback function defined');
-            }
-        })
-    });
-}
+
 
