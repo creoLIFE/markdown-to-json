@@ -162,10 +162,10 @@ var parser = {
             value: object.parent, enumerable: false
         });
 
-        if( typeof object.content !== 'undefined' ){
+        if( typeof object.content !== 'undefined' && object.content.length === 0 ){
             delete object.content;
         }
-        if( typeof object.text !== 'text' ){
+        if( typeof object.text !== 'undefined' && object.text === '' ){
             delete object.text;
         }
 
