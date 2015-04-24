@@ -84,10 +84,10 @@ var parser = {
                     (curr.heading.subsections || root.sections).push(
                         curr.heading = parser.hide({
                             name: name,
-                            subsections: [],
-                            parent: curr.heading,
                             text: d.text,
-                            content: d.content
+                            content: d.content,
+                            subsections: [],
+                            parent: curr.heading
                         })
                     )
                 }
@@ -100,10 +100,10 @@ var parser = {
                     (curr.heading.parent.subsections || root.sections).push(
                         curr.heading = parser.hide({
                             name: name,
-                            subsections: [],
-                            parent: curr.heading.parent,
                             text: d.text,
-                            content: d.content
+                            content: d.content,
+                            subsections: [],
+                            parent: curr.heading.parent
                         })
                     )
                 }
