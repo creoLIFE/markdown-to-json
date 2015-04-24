@@ -168,9 +168,6 @@ var parser = {
         if( typeof object.text !== 'undefined' && object.text === '' ){
             delete object.text;
         }
-        if( typeof object.subsections !== 'undefined' && object.subsections.length === 0 ){
-            delete object.subsections;
-        }
 
         return object
     },
