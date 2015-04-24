@@ -75,16 +75,19 @@ var parser = {
             if (token.type === 'heading' && token.depth <= parseDepth) {
                 var depth = token.depth;
                 var name = token.text;
+                var d = parser.findDetails(i, tokens);
 
                 if (depth > curr.depth) {
                     curr.heading = curr.heading || root;
                     curr.depth = depth;
 
                     (curr.heading.subsections || root.sections).push(
-                        curr.heading = parser.hideParent({
+                        curr.heading = parser.hide({
                             name: name,
                             subsections: [],
-                            parent: curr.heading
+                            parent: curr.heading,
+                            text: d.text,
+                            content: d.content
                         })
                     )
                 }
@@ -95,20 +98,18 @@ var parser = {
                     }
 
                     (curr.heading.parent.subsections || root.sections).push(
-                        curr.heading = parser.hideParent({
+                        curr.heading = parser.hide({
                             name: name,
                             subsections: [],
-                            parent: curr.heading.parent
+                            parent: curr.heading.parent,
+                            text: d.text,
+                            content: d.content
                         })
                     )
                 }
-
-                var d = parser.findDetails(i, tokens);
-                curr.heading['text'] = d.text;
-                curr.heading['content'] = d.content;
             }
         }
-        parser.hideParent(root);
+        parser.hide(root);
         return root;
     },
 
@@ -156,13 +157,21 @@ var parser = {
      * @param [object] object
      * @return [object]
      */
-    hideParent: function (object) {
+    hide: function (object) {
         Object.defineProperty(object, 'parent', {
             value: object.parent, enumerable: false
         });
 
+        if( typeof object.content !== 'undefined' ){
+            delete object.content;
+        }
+        if( typeof object.text !== 'text' ){
+            delete object.text;
+        }
+
         return object
-    }
+    },
+
 }
 
 
